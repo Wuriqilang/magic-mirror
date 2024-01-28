@@ -4,7 +4,7 @@ export default {
   // use for cookie sign key, should change to your own and keep security
   keys: 'ruoli',
   koa: {
-    port: 7001,
+    port: 6001,
   },
   tongyi: {
     apiKey: process.env.DASHSCOPE_API_KEY,

@@ -78,7 +78,7 @@ export class ScheduleService {
     return '主人我没听懂您的意思,请再说一遍吧';
   };
 
-  getSchedule = async ng => {
+  getSchedule = async () => {
     // ====================== schedule部分 =============================
     // 获取当前日期和三天后的日期的字符串表示
     const today = new Date();

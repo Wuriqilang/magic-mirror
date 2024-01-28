@@ -1,4 +1,4 @@
-import { Inject, Controller, Post, Body, makeHttpRequest, Config } from '@midwayjs/core';
+import { Inject, Controller, Post, Body, makeHttpRequest, Config, Get } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { ScheduleService } from '../service/schedule.service';
 import { CodeAssistantService } from '../service/code-assistant.service';
@@ -94,13 +94,10 @@ export class APIController {
     };
   }
 
+  // 测试用,更新魔镜外观
   @Post('/update-appearance')
   async updateAppearance() {
     const res = await this.appearanceService.generateAppearance();
-    // const res = await this.imageService.downloadAndUploadToOSS(
-    //   'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/viapi-video/2024-01-25/41304438-be7f-4307-bd80-4df9410898ff/20240125202059922198_style9_rkzdp0fm25.jpg?Expires=1706271671&OSSAccessKeyId=LTAI5tQZd8AEcZX6KZV4G8qL&Signature=kJ4Cgm7rXaxiVjOWcW0Sgo0KYHw%3D'
-    // );
-
     return {
       code: 200,
       data: {
@@ -108,5 +105,66 @@ export class APIController {
       },
       message: 'success',
     };
+  }
+
+  // 获取最新日程
+  @Get('/schedule')
+  async getDailySchedule() {
+    const scheduleStr = await this.scheduleService.getSchedule();
+    const avatar = await this.appearanceService.getNewestAppearance();
+
+    console.log('avatar', avatar);
+    console.log('scheduleStr', JSON.stringify(scheduleStr));
+    // 生成简单的html
+    const html = `
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日程提醒</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .reminder-container {
+            background-color: #fff;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .reminder-header {
+            text-align: center;
+        }
+        .avatar {
+            max-width: 100px;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+        .schedule-content {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 18px;
+            white-space: pre-line;
+        }
+    </style>
+    </head>
+    <body>
+    
+    <div class="reminder-container">
+        <div class="reminder-header">
+            <img class="avatar" src="${avatar}" alt="头像">
+        </div>
+        <div class="schedule-content">
+            ${scheduleStr}
+        </div>
+    </div>
+    
+    </body>
+    </html>`;
+    return html;
   }
 }

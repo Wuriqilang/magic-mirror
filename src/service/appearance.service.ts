@@ -69,4 +69,9 @@ export class AppearanceService {
 
     return generateAppearanceUrl;
   };
+
+  getNewestAppearance = async () => {
+    const configuration = await this.configurationModel.findOne({ where: { name: '魔镜' } });
+    return configuration.avatar;
+  };
 }
